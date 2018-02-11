@@ -1,9 +1,18 @@
 #include "Sakura_ezWiFi.h"
 
+#define forward_left 36
+#define forward_right 30
+#define backward_left 37
+#define backward_right 31
+
+
+
 bool brake_range=0, brake_wifi=0;
 
-int trigPin = 8; // Ultrasonic's trigPin
-int echoPin = 9; // Ultrasonic's echoPin
+#define trigPin 8
+// Ultrasonic's trigPin
+#define echoPin 9
+// Ultrasonic's echoPin
  
 int distance = 30; // Distance to the front car
 int accuracy = 3;  // Range of correct distance
@@ -32,24 +41,24 @@ int decMotor() {  // Decelerate motor
 }
  
 void forward(int rotSpeed) {  // Car moves forward
-  analogWrite(5, 0);
-  analogWrite(11, 0);
-  analogWrite(6, rotSpeed);
-  analogWrite(10, rotSpeed);
+  analogWrite(backward_right, 0);
+  analogWrite(backward_left, 0);
+  analogWrite(forward_right, rotSpeed);
+  analogWrite(forward_left, rotSpeed);
 }
  
 void backward(int rotSpeed) {  // Car moves backward
-  analogWrite(6, 0);
-  analogWrite(10, 0);
-  analogWrite(5, rotSpeed);
-  analogWrite(11, rotSpeed);
+  analogWrite(forward_right, 0);
+  analogWrite(forward_left, 0);
+  analogWrite(backward_right, rotSpeed);
+  analogWrite(backward_left, rotSpeed);
 }
  
 void brake() {   // Brake
-  analogWrite(5, 0);
-  analogWrite(6, 0);
-  analogWrite(10, 0);
-  analogWrite(11, 0);
+  analogWrite(backward_right, 0);
+  analogWrite(forward_right, 0);
+  analogWrite(forward_left, 0);
+  analogWrite(backward_left, 0);
 }
  
 int getRange() {  // Getting range without Ultrasonic lib
@@ -65,14 +74,14 @@ int getRange() {  // Getting range without Ultrasonic lib
  
 void setup() {
   Serial.begin(9600);  // Debugging
-  pinMode(5, OUTPUT); // Right backward
-  pinMode(6, OUTPUT); // Right forward
+  pinMode(backward_right, OUTPUT); // Right backward
+  pinMode(forward_right, OUTPUT); // Right forward
  
-  pinMode(11, OUTPUT); // Left backward
-  pinMode(10, OUTPUT); // Left forward
+  pinMode(backward_left, OUTPUT); // Left backward
+  pinMode(forward_left, OUTPUT); // Left forward
  
-  pinMode(8, OUTPUT); // Trig pin
-  pinMode(9, INPUT); // Echo pin
+  pinMode(trigPin, OUTPUT); // Trig pin
+  pinMode(echoPin, INPUT); // Echo pin
 }
 void loop()
 {
