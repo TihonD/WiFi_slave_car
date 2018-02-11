@@ -1,5 +1,7 @@
 #include "Sakura_ezWiFi.h"
 
+bool brake_range=0, brake_wifi=0;
+
 int trigPin = 8; // Ultrasonic's trigPin
 int echoPin = 9; // Ultrasonic's echoPin
  
