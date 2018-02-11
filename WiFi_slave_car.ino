@@ -5,9 +5,14 @@
 #define backward_left 37
 #define backward_right 31
 
+#define left_odometr_pin 7
+//датчик одометра левого колеса
+//за координату будет приниматься именно он
+
 
 
 bool brake_range=0, brake_wifi=0;
+volatile long int odometr=0;
 
 #define trigPin 8
 // Ultrasonic's trigPin
@@ -17,6 +22,11 @@ bool brake_range=0, brake_wifi=0;
 int distance = 30; // Distance to the front car
 int accuracy = 3;  // Range of correct distance
 int motorSpeed = 100;
+
+void odometr_inc(void)
+{
+  odometr++;
+}
 
 ezWiFi wifi(115200);//Включаем WiFi
 
@@ -82,6 +92,10 @@ void setup() {
  
   pinMode(trigPin, OUTPUT); // Trig pin
   pinMode(echoPin, INPUT); // Echo pin
+
+  pinMode(left_odometr_pin, INPUT);
+  attachInterrupt(left_odometr_pin, odometr_inc, FALLING);
+
 }
 void loop()
 {
