@@ -4,15 +4,14 @@
 #define forward_right 30
 #define backward_left 37
 #define backward_right 31
+//выводы управления двигателем
 
 #define left_odometr_pin 7
 //датчик одометра левого колеса
 //за координату будет приниматься именно он
 
-
-
-bool brake_range=0, brake_wifi=0;
-volatile long int odometr=0;
+bool brake_range=0, brake_wifi=0;//переменные запрета движения
+volatile long int odometr=0;//переменная одометрическ
 
 #define trigPin 8
 // Ultrasonic's trigPin
@@ -23,17 +22,17 @@ int distance = 30; // Distance to the front car
 int accuracy = 3;  // Range of correct distance
 int motorSpeed = 100;
 
-void odometr_inc(void)
+void odometr_inc(void)//прерывание левого одометрического датчика
 {
-  odometr++;
+  odometr++;//инкремент переменной одометрического расстояния
 }
 
 ezWiFi wifi(115200);//Включаем WiFi
 
-char wifi_get_movecommand(void)
+char wifi_get_movecommand(void)//узнаём, можно ли нам двигаться
 {
-  wifi.get_req("connect.EducationRobots.RU", "/c.php?tabl=var_11&par=1");
-  return wifi.buff[0];
+  wifi.get_req("connect.EducationRobots.RU", "/c.php?tabl=var_11&par=1");//запрос на сайт
+  return wifi.buff[0];//отковыривание данных из ответа
 }
 
 int incMotor() {  // Accelerate motor
@@ -93,25 +92,25 @@ void setup() {
   pinMode(trigPin, OUTPUT); // Trig pin
   pinMode(echoPin, INPUT); // Echo pin
 
-  pinMode(left_odometr_pin, INPUT);
-  attachInterrupt(left_odometr_pin, odometr_inc, FALLING);
+  pinMode(left_odometr_pin, PULLED);//вход прерывания одометра
+  attachInterrupt(left_odometr_pin, odometr_inc, FALLING);//прерывание по низкому фронту
 
 }
 void loop()
 {
   int range = getRange();
  
-  Serial.println(range);
-  Serial.println(motorSpeed);
+  Serial.println("Range="+range);
+  Serial.println("MotorSpeed="+motorSpeed);
  
-  if ((range < 10)&&(range != 0)) brake_range=1;
+  if ((range < 10)&&(range != 0)) brake_range=1;//Нужно ли тормозить из-за датчика расстояния?
   else brake_range=0;
 
-  if(wifi_get_movecommand()) brake_wifi=0;
+  if(wifi_get_movecommand()) brake_wifi=0;//Нужно ли тормозить из-за команды с сервера?
   else brake_wifi=1;
 
-  if(brake_wifi || brake_range) brake();
-  else
+  if(brake_wifi || brake_range) brake();//Если по какой-то причине нельзя ехать - стоим.
+  else//иначе едем и регулируем скорость.
   {
     if ((range > (distance + accuracy))||(range == 0)) forward(incMotor());
     if (range < (distance - accuracy)) forward(decMotor());
